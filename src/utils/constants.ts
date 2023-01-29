@@ -1,0 +1,1 @@
+export const BASE_API_URL = "https://steam2.p.rapidapi.com";
