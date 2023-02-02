@@ -4,6 +4,11 @@ import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import ErrorPage from "./pages/ErrorPage";
 import GameSpecificPage from "./pages/GameSpecificPage";
+import GamesLikedPage from "./pages/GamesLikedPage";
+import {useEffect} from "react";
+import {useAppDispatch} from "./hooks/redux-hooks";
+import {setLikedGames} from "./store/games/gamesSlice";
+import {getLikedGamesFromLocalStorage} from "./utils/local-storage-helpers";
 
 const appTheme: ThemeProps = {
   colors: {
@@ -17,17 +22,39 @@ const router = createBrowserRouter([
     path: "/",
     element: <MainPage/>,
     errorElement: <ErrorPage/>,
+  },
+  {
+    path: "games/*",
+    errorElement: <ErrorPage/>,
     children: [
       {
-        path: "game/:slugId",
-        element: <GameSpecificPage/>,
-        errorElement: <ErrorPage/>
+        index: true,
+        element: <MainPage/>
       },
+      {
+        path: ":appId",
+        element: <GameSpecificPage/>
+      },
+      {
+        path: "liked",
+        element: <GamesLikedPage/>
+      }
     ],
   },
+  {
+    path: "*",
+    element: <Navigate to={"/"} replace/>
+  }
 ]);
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const likedGamesFromLocalStorage = getLikedGamesFromLocalStorage();
+    dispatch(setLikedGames(likedGamesFromLocalStorage));
+  }, []);
+
   return (
       <ThemeProvider theme={appTheme}>
         <GlobalStyles colors={appTheme.colors} fontColorMain={appTheme.fontColorMain}/>

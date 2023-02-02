@@ -33,4 +33,9 @@ export const ButtonActionStyled = styled(ButtonStyled)`
     border-bottom-right-radius: 1rem;
     border-top-right-radius: 1rem;
   }
+  
+  & > a {
+    color: white;
+    text-decoration: none;
+  }
 `;

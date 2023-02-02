@@ -8,6 +8,8 @@ export interface IGame {
   reviewSummary: string;
   gameIsFull?: boolean;
   gameIsLiked?: boolean;
+  description?: string;
+  gameIsSpecific?: boolean;
 }
 
 export interface IGames {

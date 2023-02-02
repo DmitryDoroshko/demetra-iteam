@@ -82,17 +82,7 @@ export const GameFullInfoStyled = styled.div`
     letter-spacing: 0;
     text-align: left;
   }
-
-  & > *:nth-child(3) {
-    grid-column: 1 / 2;
-    font-family: "Inter", sans-serif;
-    font-size: 1.4rem;
-    font-weight: 400;
-    line-height: 1.7rem;
-    letter-spacing: 0;
-    text-align: left;
-  }
-
+  
   & > *:nth-child(4) {
     grid-column: 1 / -1;
     font-family: "Inter", sans-serif;
@@ -104,6 +94,16 @@ export const GameFullInfoStyled = styled.div`
   }
 
   & > *:nth-child(5) {
+    grid-column: 1 / -1;
+    font-family: "Inter", sans-serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.7rem;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  & > *:nth-child(6) {
     grid-column: 1 / span 1;
     font-family: "Inter", sans-serif;
     font-size: 1.4rem;

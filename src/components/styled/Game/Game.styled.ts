@@ -8,12 +8,4 @@ export const GameStyled = styled.div`
   max-width: 25rem;
   width: 100%;
   position: relative;
-  
-  & > div:first-child {
-    
-  }
-  
-  & > div:nth-child(2) {
-    
-  }
 `;
