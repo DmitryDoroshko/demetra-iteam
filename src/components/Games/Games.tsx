@@ -41,9 +41,11 @@ const Games = () => {
   if (currentTableData.length > 0) {
     gamesContent = <GamesStyled>
       {currentTableData.map(game => {
-        return <Game key={game.appId} appId={game.appId} imgUrl={game.imgUrl} url={game.url} price={game.price}
+        return <Game key={game.appId || game.title} appId={game.appId} imgUrl={game.imgUrl} url={game.url}
+                     price={game.price}
                      title={game.title} released={game.released} reviewSummary={game.reviewSummary}
-                     gameIsLiked={game.gameIsLiked} gameIsFull={game.gameIsFull}/>;
+                     gameIsLiked={game.gameIsLiked} gameIsFull={game.gameIsFull} parsedPrice={game.parsedPrice}
+                     parsedDateInMilliseconds={game.parsedDateInMilliseconds}/>;
       })}
     </GamesStyled>;
   }

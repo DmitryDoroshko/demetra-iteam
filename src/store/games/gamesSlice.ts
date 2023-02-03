@@ -1,7 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
+import {
+  parseDateToMillisecondsFromBeginning,
+  parsePrice, sortLoadedGamesByPriceBiggerToLower,
+  sortLoadedGamesByPriceLowerToBigger, sortLoadedGamesByReleasedBiggerToLower, sortLoadedGamesByReleasedLowerToBigger
+} from "../../utils/helpers";
+import {IGame} from "../../model/games";
 
-interface IGame {
+/*
+export interface IGame {
   appId: string;
   title: string;
   imgUrl: string;
@@ -11,7 +18,10 @@ interface IGame {
   reviewSummary: string;
   gameIsFull?: boolean;
   gameIsLiked?: boolean;
+  parsedPrice?: number;
+  parsedDateInMilliseconds?: number;
 }
+*/
 
 export interface GamesState {
   gamesLoaded: IGame[];
@@ -19,6 +29,8 @@ export interface GamesState {
   gamesError: null | string;
   gamesLiked: IGame[];
   singleSpecificGameLoaded: IGame | null;
+  orderByWhichToSort: "lower-to-bigger" | "bigger-to-lower";
+  valueOfSortGamesBy: "price" | "released";
 }
 
 const initialState: GamesState = {
@@ -27,6 +39,8 @@ const initialState: GamesState = {
   gamesError: null,
   gamesLiked: [],
   singleSpecificGameLoaded: null,
+  orderByWhichToSort: "lower-to-bigger",
+  valueOfSortGamesBy: "price",
 };
 
 const gamesSlice = createSlice({
@@ -40,7 +54,12 @@ const gamesSlice = createSlice({
       state.gamesError = payload;
     },
     setGamesLoaded: (state, {payload}: PayloadAction<IGame[]>) => {
-      state.gamesLoaded = payload;
+      const gamesLoadedParsedForPriceAndReleasedDate = payload.map(game => {
+        const parsedPrice = parsePrice(game.price);
+        const parsedDateInMilliseconds = parseDateToMillisecondsFromBeginning(game.released);
+        return {...game, parsedPrice, parsedDateInMilliseconds};
+      });
+      state.gamesLoaded = gamesLoadedParsedForPriceAndReleasedDate;
     },
     setLikedGame: (state, {payload}: PayloadAction<IGame>) => {
       const gameAlreadyInLikedList = state.gamesLiked.find(game => game.appId === payload.appId);
@@ -66,6 +85,35 @@ const gamesSlice = createSlice({
     setLikedGames: (state, {payload}: PayloadAction<IGame[]>) => {
       state.gamesLiked = payload;
     },
+    setOrderByWhichToSort: (state, {payload}: PayloadAction<"lower-to-bigger" | "bigger-to-lower">) => {
+      state.orderByWhichToSort = payload;
+    },
+    setValueOfSortGamesBy: (state, {payload}: PayloadAction<"price" | "released">) => {
+      state.valueOfSortGamesBy = payload;
+    },
+    sortLoadedGames: (state) => {
+      if (
+          state.valueOfSortGamesBy === "price"
+          && state.orderByWhichToSort === "lower-to-bigger"
+      ) {
+        state.gamesLoaded = sortLoadedGamesByPriceLowerToBigger(state.gamesLoaded);
+      } else if (
+          state.valueOfSortGamesBy === "price"
+          && state.orderByWhichToSort === "bigger-to-lower"
+      ) {
+        state.gamesLoaded = sortLoadedGamesByPriceBiggerToLower(state.gamesLoaded);
+      } else if (
+          state.valueOfSortGamesBy === "released"
+          && state.orderByWhichToSort === "lower-to-bigger"
+      ) {
+        state.gamesLoaded = sortLoadedGamesByReleasedLowerToBigger(state.gamesLoaded);
+      } else if (
+          state.valueOfSortGamesBy === "released"
+          && state.orderByWhichToSort === "bigger-to-lower"
+      ) {
+        state.gamesLoaded = sortLoadedGamesByReleasedBiggerToLower(state.gamesLoaded);
+      }
+    },
   },
 });
 
@@ -75,7 +123,10 @@ export const {
   setGamesLoaded,
   setLikedGame,
   removeLikedGame,
-  setLikedGames
+  setLikedGames,
+  setOrderByWhichToSort,
+  setValueOfSortGamesBy,
+  sortLoadedGames
 } = gamesSlice.actions;
 
 export default gamesSlice.reducer;
@@ -84,42 +135,3 @@ export const selectGamesLoaded = (state: RootState) => state.gamesReducer.gamesL
 export const selectGamesLoading = (state: RootState) => state.gamesReducer.gamesLoading;
 export const selectGamesError = (state: RootState) => state.gamesReducer.gamesError;
 export const selectLikedGames = (state: RootState) => state.gamesReducer.gamesLiked;
-
-/*
-extraReducers: (builder) => {
-    builder.addCase(fetchGamesByGameNameThunk.pending, (state, action) => {
-      state.gamesLoading = true;
-    }).addCase(fetchGamesByGameNameThunk.fulfilled, (state, action) => {
-      state.gamesLoading = false;
-      state.gamesLoaded = action.payload;
-    }).addCase(fetchGamesByGameNameThunk.rejected, (state, action) => {
-      state.gamesLoading = false;
-      state.gamesError = action.payload as (string | null);
-    })
-  }
- */
-
-/*export const fetchGamesByGameNameThunk = createAsyncThunk(
-    "games/fetchGamesByGameNameThunk",
-    async ({gameName}: { gameName: string }) => {
-      try {
-        const gamesByGameNameLoaded = await getGamesByGameName(gameName);
-        return gamesByGameNameLoaded;
-      } catch {
-        return null;
-      }
-    });*/
-
-/*export const fetchGamesByGameName = (gameName: string): AppThunk => {
-  return async (dispatch) => {
-    dispatch(setGamesLoading(true));
-    try {
-      const gamesByGameNameLoaded = await getGamesByGameName(gameName);
-      dispatch(setGamesLoading(false));
-      dispatch(setGamesLoaded(gamesByGameNameLoaded));
-    } catch (error: any) {
-      dispatch(setGamesError(error.message.toString()));
-      dispatch(setGamesLoading(false));
-    }
-  };
-};*/

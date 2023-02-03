@@ -15,7 +15,13 @@ import publishDateIcon from "../assets/icons/publishDateIcon.png";
 import optionsIcon from "../assets/icons/optionsIcon.png";
 import {useDebounce} from "../hooks/useDebounce";
 import {useAppDispatch} from "../hooks/redux-hooks";
-import {setGamesError, setGamesLoaded, setGamesLoading} from "../store/games/gamesSlice";
+import {
+  setGamesError,
+  setGamesLoaded,
+  setGamesLoading,
+  setOrderByWhichToSort, setValueOfSortGamesBy,
+  sortLoadedGames
+} from "../store/games/gamesSlice";
 import {gamesApi} from "../services/games.service";
 import {Link} from "react-router-dom";
 import {getLikedGamesFromLocalStorage} from "../utils/local-storage-helpers";
@@ -27,12 +33,14 @@ interface IHeaderProps {
 const orderDropdownItems: IDropdownItem[] = [
   {
     id: 1,
-    value: 'Lower to bigger',
+    value: 'lower-to-bigger',
+    label: "Lower to bigger",
     icon: null,
   },
   {
     id: 2,
-    value: 'Bigger to lower',
+    value: "bigger-to-lower",
+    label: 'Bigger to lower',
     icon: null,
   },
 ];
@@ -40,12 +48,14 @@ const orderDropdownItems: IDropdownItem[] = [
 const sortingDropdownItems: IDropdownItem[] = [
   {
     id: 1,
-    value: 'Price',
+    value: 'price',
+    label: 'Price',
     icon: priceIcon,
   },
   {
     id: 2,
-    value: 'Publish Date',
+    value: 'released',
+    label: 'Publish Date',
     icon: publishDateIcon,
   },
 ];
@@ -55,10 +65,11 @@ const Header: FC<IHeaderProps> = (props) => {
   const [searchGamesInputValue, setSearchGamesInputValue] = useState<string>("");
   const debouncedSearchGamesInputValue: string = useDebounce<string>(searchGamesInputValue, 1000);
 
-  const [trigger, {data, isLoading, error}] = gamesApi.endpoints.getGamesByGameName.useLazyQuery();
+  const [trigger] = gamesApi.endpoints.getGamesByGameName.useLazyQuery();
 
   const setIsGameLikedFlagForEachOfCorrespondingLoadedGames = (loadedGames: IGame[], likedGamesFromLocalStorage: IGame[]) => {
     dispatch(setGamesLoaded(loadedGames));
+    dispatch(sortLoadedGames());
 
     const newLoadedGames = loadedGames.map(loadedGame => {
       let newLoadedGame = loadedGame;
@@ -73,6 +84,7 @@ const Header: FC<IHeaderProps> = (props) => {
     });
 
     dispatch(setGamesLoaded(newLoadedGames));
+    dispatch(sortLoadedGames());
   };
 
   const gamesLoadHandler = async (searchGamesInputValue: string) => {
@@ -107,6 +119,16 @@ const Header: FC<IHeaderProps> = (props) => {
     await gamesLoadHandler(searchGamesInputValue);
   };
 
+  const orderDropdownValueChangeHandler = (valueOfDropdown: any) => {
+    dispatch(setOrderByWhichToSort(valueOfDropdown));
+    dispatch(sortLoadedGames());
+  };
+
+  const sortDropdownValueChangeHandler = (valueOfDropdown: any) => {
+    dispatch(setValueOfSortGamesBy(valueOfDropdown));
+    dispatch(sortLoadedGames());
+  };
+
   return (
       <HeaderStyled>
         <NavStyled>
@@ -120,8 +142,10 @@ const Header: FC<IHeaderProps> = (props) => {
                 <Link to={"/"}><ImageStyled src={searchIcon}/></Link>
               </ButtonSearchStyled>
             </FormStyled>
-            <Dropdown items={orderDropdownItems} icon={optionsIcon} multiSelect={false}/>
-            <Dropdown title={"Price"} items={sortingDropdownItems} multiSelect={false} padding={".2rem 1.8rem"}/>
+            <Dropdown items={orderDropdownItems} icon={optionsIcon} multiSelect={false}
+                      onDropdownValueChange={orderDropdownValueChangeHandler}/>
+            <Dropdown title={"Price"} items={sortingDropdownItems} multiSelect={false} padding={".2rem 1.8rem"}
+                      onDropdownValueChange={sortDropdownValueChangeHandler}/>
             <ActionsStyled>
               <ButtonActionStyled>
                 <Link to={"/"}>Search</Link>

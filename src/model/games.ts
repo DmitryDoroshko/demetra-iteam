@@ -10,6 +10,8 @@ export interface IGame {
   gameIsLiked?: boolean;
   description?: string;
   gameIsSpecific?: boolean;
+  parsedPrice: number;
+  parsedDateInMilliseconds: number;
 }
 
 export interface IGames {
