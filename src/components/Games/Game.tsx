@@ -11,6 +11,7 @@ import {removeLikedGame, setLikedGame} from "../../store/games/gamesSlice";
 import {useAppDispatch} from "../../hooks/redux-hooks";
 import {addSingleLikedGameToLocalStorage, removeSingleGameFromLocalStorage} from "../../utils/local-storage-helpers";
 import {Link} from "react-router-dom";
+import {parseDateToMillisecondsFromBeginning, parsePrice} from "../../utils/helpers";
 
 const Game = ({
                 title,
@@ -43,7 +44,9 @@ const Game = ({
         reviewSummary,
         released,
         gameIsFull: true,
-        gameIsLiked: true
+        gameIsLiked: true,
+        parsedDateInMilliseconds: parseDateToMillisecondsFromBeginning(released),
+        parsedPrice: parsePrice(price),
       };
       dispatch(setLikedGame(likedGame));
       addSingleLikedGameToLocalStorage(likedGame);

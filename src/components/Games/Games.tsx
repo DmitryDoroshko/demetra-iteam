@@ -50,7 +50,7 @@ const Games = () => {
   useEffect(() => {
     const getGamesByGameQueryAndHandleTheRequestResults =  async () => {
 
-      if (gameQuery === undefined) {
+      if (gameQuery === undefined || gameQuery === null) {
         return;
       }
 

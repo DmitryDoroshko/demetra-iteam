@@ -45,7 +45,7 @@ const router = createBrowserRouter([
     path: "*",
     element: <Navigate to={"/"} replace/>
   }
-]);
+], { basename: "/demetra-iteam"});
 
 function App() {
   const dispatch = useAppDispatch();
