@@ -7,22 +7,6 @@ import {
 } from "../../utils/helpers";
 import {IGame} from "../../model/games";
 
-/*
-export interface IGame {
-  appId: string;
-  title: string;
-  imgUrl: string;
-  released: string;
-  price: string;
-  url: string;
-  reviewSummary: string;
-  gameIsFull?: boolean;
-  gameIsLiked?: boolean;
-  parsedPrice?: number;
-  parsedDateInMilliseconds?: number;
-}
-*/
-
 export interface GamesState {
   gamesLoaded: IGame[];
   gamesLoading: boolean;

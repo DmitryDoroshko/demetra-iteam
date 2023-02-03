@@ -11,9 +11,7 @@ const GameSpecificPage = () => {
     isLoading: isSingleGameLoading,
     error: isSingleGameError
   } = useGetSingleGameByAppIdQuery(appId?.toString() || "");
-
-  console.log({singleGame, isSingleGameLoading, isSingleGameError});
-
+  
   let content;
 
   if (singleGame && !isSingleGameLoading) {

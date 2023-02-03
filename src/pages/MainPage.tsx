@@ -5,7 +5,7 @@ import Games from "../components/Games/Games";
 const MainPage = () => {
   return (
       <Layout>
-        <Games/>
+        <Games />
       </Layout>
   );
 };

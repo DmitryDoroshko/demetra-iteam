@@ -14,7 +14,7 @@ import priceIcon from "../assets/icons/priceIcon.png";
 import publishDateIcon from "../assets/icons/publishDateIcon.png";
 import optionsIcon from "../assets/icons/optionsIcon.png";
 import {useDebounce} from "../hooks/useDebounce";
-import {useAppDispatch} from "../hooks/redux-hooks";
+import {useAppDispatch, useAppSelector} from "../hooks/redux-hooks";
 import {
   setGamesError,
   setGamesLoaded,
@@ -23,7 +23,7 @@ import {
   sortLoadedGames
 } from "../store/games/gamesSlice";
 import {gamesApi} from "../services/games.service";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {getLikedGamesFromLocalStorage} from "../utils/local-storage-helpers";
 import {IGame} from "../model/games";
 
@@ -61,7 +61,10 @@ const sortingDropdownItems: IDropdownItem[] = [
 ];
 
 const Header: FC<IHeaderProps> = (props) => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const orderByWhichToSort = useAppSelector(state => state.gamesReducer.orderByWhichToSort);
+  const valueOfSortGamesBy = useAppSelector(state => state.gamesReducer.valueOfSortGamesBy);
   const [searchGamesInputValue, setSearchGamesInputValue] = useState<string>("");
   const debouncedSearchGamesInputValue: string = useDebounce<string>(searchGamesInputValue, 1000);
 
@@ -88,6 +91,10 @@ const Header: FC<IHeaderProps> = (props) => {
   };
 
   const gamesLoadHandler = async (searchGamesInputValue: string) => {
+    navigate({
+      pathname: '/games',
+      search: `?sort=${valueOfSortGamesBy}&order=${orderByWhichToSort}&${new URLSearchParams({gameQuery: searchGamesInputValue}).toString()}`,
+    });
     dispatch(setGamesLoading(true));
     const {data, error} = await trigger(searchGamesInputValue, false);
 

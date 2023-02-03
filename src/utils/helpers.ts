@@ -13,8 +13,6 @@ export function parseDateToMillisecondsFromBeginning(date: string) {
   return resultValue;
 }
 
-console.log(parseDateToMillisecondsFromBeginning("Coming soon"));
-
 // 12,34$ => 12.34
 export function parsePrice(price: string) {
   if (price.toLowerCase().includes("free")) {
