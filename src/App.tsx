@@ -45,7 +45,7 @@ const router = createBrowserRouter([
     path: "*",
     element: <Navigate to={"/"} replace/>
   }
-], { basename: "/demetra-iteam"});
+], {basename: "/demetra-iteam"});
 
 function App() {
   const dispatch = useAppDispatch();
@@ -56,10 +56,10 @@ function App() {
   }, []);
 
   return (
-      <ThemeProvider theme={appTheme}>
-        <GlobalStyles colors={appTheme.colors} fontColorMain={appTheme.fontColorMain}/>
-        <RouterProvider router={router}/>
-      </ThemeProvider>
+    <ThemeProvider theme={appTheme}>
+      <GlobalStyles colors={appTheme.colors} fontColorMain={appTheme.fontColorMain}/>
+      <RouterProvider router={router}/>
+    </ThemeProvider>
   );
 }
 
