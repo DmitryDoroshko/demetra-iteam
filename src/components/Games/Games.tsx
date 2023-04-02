@@ -16,7 +16,7 @@ import {getLikedGamesFromLocalStorage} from "../../utils/local-storage-helpers";
 import {IGame} from "../../model/games";
 
 const Games = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const sort = searchParams.get("sort");
   const order = searchParams.get("order");
@@ -27,7 +27,7 @@ const Games = () => {
   const gamesLoading = useAppSelector(selectGamesLoading);
   const gamesError = useAppSelector(selectGamesError);
 
-  const [trigger] = gamesApi.useLazyGetGamesByGameNameQuery();
+  const [triggerGetGamesByGameName] = gamesApi.useLazyGetGamesByGameNameQuery();
 
   const setIsGameLikedFlagForEachOfCorrespondingLoadedGames = (loadedGames: IGame[], likedGamesFromLocalStorage: IGame[]) => {
     dispatch(setGamesLoaded(loadedGames));
@@ -55,7 +55,7 @@ const Games = () => {
       }
 
       dispatch(setGamesLoading(true));
-      const {data, error} = await trigger(gameQuery, false);
+      const {data, error} = await triggerGetGamesByGameName(gameQuery, false);
 
       if (data) {
         const likedGamesFromLocalStorage = getLikedGamesFromLocalStorage();
